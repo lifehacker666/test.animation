@@ -1,0 +1,176 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <script src="js/lib/jquery-1.11.0.min.js"></script>
+    <script src="js/lib/jquery.scrollTo.min.js"></script>
+    <script src="js/lib/jquery.mousewheel.min.js"></script>
+
+
+
+    <!--[if lt IE 9]>
+    <script>
+        var e = ("article,aside,figcaption,figure,footer,header,hgroup,nav,section,time,audio,video,canvas").split(',');
+        for (var i = 0; i < e.length; i++) {
+            document.createElement(e[i]);
+        }
+    </script>
+    <![endif]-->
+
+    <style>
+        html, body {
+            width:100%;
+            height:100%;
+            margin:0;
+            padding:0;
+            font-size:12px;
+        }
+
+        .clear{
+            clear: both;
+        }
+
+        #overflow_div {
+            position: relative;
+            width: 100%;
+            min-width: 1000px;
+            min-height: 100%;
+            overflow: hidden;
+        }
+
+        .content-wraper {
+            position: relative;
+        }
+
+        p{
+            margin: 0;
+            font-size: 36px;
+            color: antiquewhite;
+        }
+
+        .content {
+            position: relative;
+            margin: 0 auto;
+            width: 1000px;
+            background: linear-gradient(to top, #2d4efe, #66e3f1);
+            background-color: #2d4efe;
+        }
+    </style>
+
+    <script>
+        $(function(){
+            //плавный скроллинг
+            $('body').mousewheel(function(event, delta) {
+                if (delta < 0) {
+                    $('body').scrollTo('+=30', 120 ); //шаг и скорость
+                }
+                else
+                    $('body').scrollTo('-=30', 120 );
+                return false;
+            });
+
+            var blockContainer = $('.block.animate'); //блок-контейнер, содержащий анимированные элементы
+            var offsetTopBlockContainer = blockContainer.offset().top;
+            var blockContainerHeight = blockContainer.height();
+
+            // анимируемые блоки
+            var positionTopBlock1 = $('.item1').position().top; //позиция блока относительно родителя (нужно задавать вначале)
+            var positionTopBlock2 = $('.item2').position().top;
+            var positionTopBlock3 = $('.item3').position().top;
+            var positionLeftBlock4 = $('.item4').position().left;
+            var positionLeftBlock5 = $('.item5').position().left;
+            var offsetLeftBlock4 = $('.item4').offset().left;
+            var offsetLeftBlock5 = $('.item5').offset().left;
+
+            //константы
+            var scrollTopDocument = 0;
+            var windowHeight = $(window).height();
+            var topItem = 0;
+            var topItem2 = 0;
+            var topItem3 = 0;
+
+            $(window).scroll(function() {
+
+                scrollTopDocument = $(document).scrollTop();
+                //если расстояние на которое прокрутили (scrollTopDocument) эл-т > расстояния до блока с анимациями (offsetTopBlock)
+                // И scrollTopDocument мешьше чем offsetTopBlock плюс высота этого блока с анимациями
+                // то мы находимся в блоке с анимациями
+              if( scrollTopDocument + windowHeight >= offsetTopBlockContainer && scrollTopDocument < offsetTopBlockContainer + blockContainerHeight ){
+
+                    topItem = (scrollTopDocument + windowHeight - offsetTopBlockContainer);  //величина скролла относительно блока-контейнера, содержащего анимации
+//                  topItem2 = topItem*0.8*(Math.cos( (scrollTopDocument + windowHeight - offsetTopBlockContainer)/blockContainerHeight ) );  //анимация с косинусом (к-т задавать маленький)
+//                  topItem3 = topItem*4*(Math.sin( (scrollTopDocument + windowHeight - offsetTopBlockContainer)/blockContainerHeight ) );  //анимация с синусом (к-т задавать большой)
+
+                    $('.item1').css({top: Math.min( ( positionTopBlock1 + topItem * 0.55 ), 500 ) + 'px'}); // брать числа не больше чем 500
+                    $('.item2').css({top: Math.min( ( positionTopBlock2 + topItem * 0.42 ), 500 ) + 'px'});
+                    $('.item3').css({top: Math.min( ( positionTopBlock3 + topItem * 0.37 ), 500 ) + 'px'});
+
+                    var delayItem4 = 500; // к-т задержки анимации
+                    if (topItem >= delayItem4 ) {
+                      $('.item4').css({
+                          left: Math.min(( -(offsetLeftBlock4 + $('.item4').width()) + positionLeftBlock4 +  (topItem - delayItem4) * 0.72 ), 0) + 'px',
+                          'visibility': 'visible'
+                      });
+                    //  $('.item4').css({left: Math.min(( -(offsetLeftBlock4 + $('.item4').width()) + positionLeftBlock4 + topItem * 0.42 ), 0) + 'px'});
+                    }else{
+                        $('.item4').css('visibility','hidden');
+                    }
+
+                    var delayItem5 = 500; // к-т задержки анимации
+                    if (topItem >= delayItem5 ) {
+                        $('.item5').css({
+                            right: Math.min(( offsetLeftBlock5 - $(window).width() + (topItem - delayItem5) * 0.72), 0) + 'px',
+                            'visibility': 'visible'
+                        });
+                    }else{
+                        $('.item5').css('visibility','hidden');
+                    }
+
+                    $('.item6').css({
+                        width: Math.min( ( 0 + topItem * 0.2 ), 200 ) + 'px',
+                        height: Math.min( ( 0 + topItem * 0.2 ), 200 ) + 'px',
+                        marginTop: ( 200 - $('.item6').height() )/2 + 'px',
+                        marginRight: ( 200- $('.item6').width() )/2 +'px',
+                        opacity: 0 + topItem/1000
+
+                    });
+                    console.log( topItem);
+                }
+
+
+
+             });
+
+        });
+    </script>
+
+</head>
+
+<body>
+
+   <div id="overflow_div" class="">
+       <div class="content-wraper">
+           <div class="content">
+               <div class="block" style="height: 1200px;background: #59e8bc"></div>
+               <div class="block animate" style="height: 800px;position: relative;background: #ff6669">
+                   <p>Animation sector!!!</p>
+
+                   <div class="item1" style="width: 100px;height: 100px;background: red;position: absolute;left: 200px;top: 100px;"></div>
+                   <div class="item2" style="width: 100px;height: 100px;background: green;position: absolute;left: 400px;top: 100px;"></div>
+                   <div class="item3" style="width: 100px;height: 100px;background: black;position: absolute;left: 600px;top: 100px;"></div>
+
+                   <div class="item4" style="width: 50px;height: 450px;background: red;position: absolute;left: 0px;top: 200px;"></div>
+                   <div class="item5" style="width: 50px;height: 450px;background: red;position: absolute;right: 0px;top: 200px;"></div>
+
+                   <div class="item6" style="width: 200px;height: 200px;background: #fff254;position: absolute;right: 100px;top: 100px;"></div>
+                   <div class="item6-ghost" style="width: 200px;height: 200px;border:1px solid red;position: absolute;right: 100px;top: 100px;"></div>
+               </div>
+               <div class="block" style="width: 100%;height: 1200px;background: #59e8bc"></div>
+           </div>
+       </div>
+   </div>
+
+</body>
+</html>
