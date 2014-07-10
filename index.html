@@ -85,12 +85,23 @@
             var offsetLeftBlock5 = $('.item5').offset().left;
 
             //константы
-            var scrollTopDocument = 0;
+            var scrollTopDocument = $(document).scrollTop();
             var windowHeight = $(window).height();
-            var topItem = 0;
+            var topItem = (scrollTopDocument + windowHeight - offsetTopBlockContainer);
             var topItem2 = 0;
             var topItem3 = 0;
 
+            // Анимации, которые должны выполниться независимо и без скролла
+            $('.item6').css({
+                width: Math.min( ( 0 + topItem * 0.2 ), 200 ) + 'px',
+                height: Math.min( ( 0 + topItem * 0.2 ), 200 ) + 'px',
+                marginTop: ( 200 - $('.item6').height() )/2 + 'px',
+                marginRight: ( 200- $('.item6').width() )/2 +'px',
+                opacity: 0 + topItem/1000
+
+            });
+
+            // Анимации, повешенные на скролл
             $(window).scroll(function() {
 
                 scrollTopDocument = $(document).scrollTop();
