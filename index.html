@@ -239,10 +239,10 @@
                 if (scrollTopDocument + windowHeight >= offsetTopBlockParallaxContainer && scrollTopDocument < offsetTopBlockParallaxContainer + blockParallaxContainerHeight) {
                     topItem2 = (scrollTopDocument + windowHeight - offsetTopBlockParallaxContainer);
 
-                   if (topItem2 >= 100) {
+                   if (topItem2 >= 0) { // задержка анимации
 
                         blockParallaxContainer.css({
-                            backgroundPositionY: -( scrollTopDocument / ( topItem2/5  ) ) + 'px' // величина отрицательная, т.к прокручивание осуществляется вверх
+                            backgroundPositionY: -( scrollTopDocument / 2 ) + 'px' // величина отрицательная, т.к прокручивание осуществляется вверх
                         });
                     }
                 }
@@ -274,7 +274,9 @@
                    <div class="item7" style="width: 100px;height: 100px;background: #47e2ff;position: absolute;left: 200px;top: 600px;"></div>
                    <div class="item8" style="width: 100px;height: 100px;background: #3583ff;position: absolute;right: 200px;top: 600px;"></div>
                </div>
-               <div class="block parallax"></div>
+               <div class="block parallax">
+                   <div style="font-size: 40px;color: #fff;width: 100%;text-align: center;top:150px;position: relative;">ЗАГОЛОВОК БЛОКА</div>
+               </div>
                <div class="block" style="width: 100%;height: 800px;background: #59e8bc"></div>
            </div>
        </div>
