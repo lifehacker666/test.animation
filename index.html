@@ -5,6 +5,7 @@
     <title></title>
     <link rel="icon" type="image/png" href="/favicon.png">
     <script src="js/lib/jquery-1.11.0.min.js"></script>
+    <script src="js/lib/jquery.easing.1.3.min.js"></script>
     <script src="js/lib/jquery.scrollTo.min.js"></script>
     <script src="js/lib/jquery.mousewheel.min.js"></script>
 
@@ -57,6 +58,11 @@
             background: linear-gradient(to top, #2d4efe, #66e3f1);
             background-color: #2d4efe;
         }
+
+        .parallax.block{
+            height: 400px;
+            background: url(../img/bg.jpg) 0 0 fixed;
+        }
     </style>
 
     <script>
@@ -64,17 +70,20 @@
             /* плавный скроллинг */
             $('body').mousewheel(function(event, delta) {
                 if (delta < 0) {
-                    $('body').scrollTo('+=30', 120 ); //шаг и скорость
+                    $('body').scrollTo('+=30', 150, {easing:'easeOutSine'} ); //шаг и скорость
                 }
                 else
-                    $('body').scrollTo('-=30', 120 );
+                    $('body').scrollTo('-=30', 150, {easing:'easeOutSine'} );
                 return false;
             });
             /* /плавный скроллинг */
 
-            var blockContainer = $('.block.animate'); //блок-контейнер, содержащий анимированные элементы
+            var blockContainer = $('.animate'); //блок-контейнер, содержащий анимированные элементы
             var offsetTopBlockContainer = blockContainer.offset().top;
             var blockContainerHeight = blockContainer.height();
+            var blockParallaxContainer = $('.parallax'); // блок с параллаксом фона
+            var offsetTopBlockParallaxContainer = blockParallaxContainer.offset().top;
+            var blockParallaxContainerHeight = blockParallaxContainer.height();
 
             // анимируемые блоки
             var positionTopBlock1 = $('.item1').position().top; //позиция блока относительно родителя (нужно задавать вначале)
@@ -90,7 +99,7 @@
             var scrollTopDocument = $(document).scrollTop();
             var windowHeight = $(window).height();
             var topItem = (scrollTopDocument + windowHeight - offsetTopBlockContainer);
-            var topItem2 = 0;
+            var topItem2 = (scrollTopDocument + windowHeight - offsetTopBlockParallaxContainer);
             var topItem3 = 0;
 
             // Анимации, которые должны выполниться независимо и без скролла:
@@ -116,9 +125,11 @@
                 //если расстояние на которое прокрутили (scrollTopDocument) эл-т > расстояния до блока с анимациями (offsetTopBlock)
                 // И scrollTopDocument мешьше чем offsetTopBlock плюс высота этого блока с анимациями
                 // то мы находимся в блоке с анимациями
-                if( scrollTopDocument + windowHeight >= offsetTopBlockContainer && scrollTopDocument < offsetTopBlockContainer + blockContainerHeight ){
+
+                if( scrollTopDocument + windowHeight >= offsetTopBlockContainer && scrollTopDocument < offsetTopBlockContainer + blockContainerHeight ) {
 
                     topItem = (scrollTopDocument + windowHeight - offsetTopBlockContainer);  //величина скролла относительно блока-контейнера, содержащего анимации
+
 //                  topItem2 = topItem*0.8*(Math.cos( (scrollTopDocument + windowHeight - offsetTopBlockContainer)/blockContainerHeight ) );  //анимация с косинусом (к-т задавать маленький)
 //                  topItem3 = topItem*4*(Math.sin( (scrollTopDocument + windowHeight - offsetTopBlockContainer)/blockContainerHeight ) );  //анимация с синусом (к-т задавать большой)
 
@@ -133,29 +144,29 @@
                     var delayItem1 = 0; // к-т задержки анимации
                     if (topItem >= delayItem1 ) {
                         $('.item1').css({
-                            top: Math.min( ( 50 +  (topItem - delayItem1) * 0.5 ), 300 ) + 'px', // анимация начинается от 50px сверху
+                            top: Math.min( ( 50+  ( topItem - delayItem1) * 0.5 ), 300 ) + 'px', // анимация начинается от 50px сверху
                             'visibility': 'visible'
                         });
                     } else {
-                        $('.item1').css('visibility','hidden');
+                        $('.item1').css('visibility', 'hidden');
                     }
 
                     // блок 2
                     var delayItem2 = 0; // к-т задержки анимации
                     if (topItem >= delayItem2 ) {
                         $('.item2').css({
-                            top: Math.min( ( 50 +  (topItem - delayItem2) * 0.4 ), 300 ) + 'px',
+                            top: Math.min( (50 +  ( topItem - delayItem2) * 0.4 ), 300 ) + 'px',
                             'visibility': 'visible'
                         });
                     } else {
-                        $('.item2').css('visibility','hidden');
+                        $('.item2').css('visibility', 'hidden');
                     }
 
                     // блок 3
                     var delayItem3 = 0; // к-т задержки анимации
                     if (topItem >= delayItem3 ) {
                         $('.item3').css({
-                            top: Math.min( ( 50 +  (topItem - delayItem3) * 0.3 ), 300 ) + 'px',
+                            top: Math.min( ( 50 +  ( topItem - delayItem3) * 0.3 ), 300 ) + 'px',
                             'visibility': 'visible'
                         });
                     } else {
@@ -190,37 +201,50 @@
                         $('.item6').css({
                             width: Math.min( ( ( topItem - delayItem6 ) * 0.2 ), block6Width ) + 'px',
                             height: Math.min( ( ( topItem - delayItem6 ) * 0.2 ), block6Height ) + 'px',
-                            marginTop: ( block6Width - $('.item6').height() )/2 + 'px',
-                            marginRight: ( block6Height- $('.item6').width() )/2 +'px',
-                            opacity: 0 + (topItem - delayItem6)/1000
+                            marginTop: ( block6Width - $('.item6').height() )/ 2 + 'px',
+                            marginRight: ( block6Height - $('.item6').width() ) / 2 + 'px',
+                            opacity: 0 + (topItem - delayItem6) / 1000
 
                         });
-                    }else{
-                        $('.block6').css('visibility','hidden');
+                    } else {
+                        $('.block6').css('visibility', 'hidden');
                     }
 
                     //нижний блок 1
                     var delayItem7 = 500; // к-т задержки анимации
-                    if ( topItem >= delayItem7 ) {
+                    if (topItem >= delayItem7) {
                         $('.item7').css({
-                            top: Math.max( ( positionTopBlock7 +( blockContainerHeight - positionTopBlock7) - ( topItem - delayItem7 )* 0.5 ), 600 ) + 'px',
+                            top: Math.max(( positionTopBlock7 + ( blockContainerHeight - positionTopBlock7) - ( topItem - delayItem7 ) * 0.5 ), 600) + 'px',
                             'visibility': 'visible'
                         });
-                    }else{
-                        $('.item7').css('visibility','hidden');
+                    } else {
+                        $('.item7').css('visibility', 'hidden');
                     }
 
                     //нижний блок 2
                     var delayItem8 = 500; // к-т задержки анимации
-                    if ( topItem >= delayItem8 ) {
+                    if (topItem >= delayItem8) {
                         $('.item8').css({
-                            top: Math.max( ( positionTopBlock8 +( blockContainerHeight - positionTopBlock8) - ( topItem - delayItem8 )* 0.5 ), 600 ) + 'px',
+                            top: Math.max(( positionTopBlock8 + ( blockContainerHeight - positionTopBlock8) - ( topItem - delayItem8 ) * 0.5 ), 600) + 'px',
                             'visibility': 'visible'
                         });
-                    }else{
-                        $('.item8').css('visibility','hidden');
+                    } else {
+                        $('.item8').css('visibility', 'hidden');
                     }
+
                     console.log( ( positionTopBlock7 +( blockContainerHeight - positionTopBlock7 - 91) - ( topItem - delayItem7 )* 1 ) );
+                }
+
+                //parallax фона (у фона должно быть св-во background-attachment:fixed
+                if (scrollTopDocument + windowHeight >= offsetTopBlockParallaxContainer && scrollTopDocument < offsetTopBlockParallaxContainer + blockParallaxContainerHeight) {
+                    topItem2 = (scrollTopDocument + windowHeight - offsetTopBlockParallaxContainer);
+
+                   if (topItem2 >= 100) {
+
+                        blockParallaxContainer.css({
+                            backgroundPositionY: -( scrollTopDocument / ( topItem2/5  ) ) + 'px' // величина отрицательная, т.к прокручивание осуществляется вверх
+                        });
+                    }
                 }
              });
         });
@@ -250,7 +274,8 @@
                    <div class="item7" style="width: 100px;height: 100px;background: #47e2ff;position: absolute;left: 200px;top: 600px;"></div>
                    <div class="item8" style="width: 100px;height: 100px;background: #3583ff;position: absolute;right: 200px;top: 600px;"></div>
                </div>
-               <div class="block" style="width: 100%;height: 1200px;background: #59e8bc"></div>
+               <div class="block parallax"></div>
+               <div class="block" style="width: 100%;height: 800px;background: #59e8bc"></div>
            </div>
        </div>
    </div>
